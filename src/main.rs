@@ -25,15 +25,15 @@ fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<St
     for line in lines {
         matcher_list.iter().for_each(|matcher| {
             if line.contains(matcher) {
-                matches.push(line.to_string());
+                matches.push(line.to_string().replace(matcher, &format!("\x1b[94m{}\x1b[0m", matcher)));
             }
         });
     }
-    if matches.len() > 0 {
+    if !matches.is_empty() {
          Some(matches)
     } else {
          None
-    }
+    } 
 }
 
 fn get_match_arg() -> Vec<String> {
