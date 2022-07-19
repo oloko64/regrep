@@ -3,9 +3,18 @@ use std::{
     process::exit,
 };
 
+struct LineMatch {
+    line: String,
+    line_number: i64,
+}
+
 fn main() {
     match match_in_file(read_lines_stdin(), get_match_arg()) {
-        Some(matched) => println!("{}", matched.join("\n")),
+        Some(matched) => {
+            for line in matched {
+                println!("{}: {}", line.line_number, line.line);
+            }
+        },
         None => (),
     }
 }
@@ -20,20 +29,25 @@ fn read_lines_stdin() -> Vec<String> {
         .collect()
 }
 
-fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<String>> {
+fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<LineMatch>> {
     let mut matches = Vec::new();
-    for line in lines {
+    for (index, line) in lines.iter().enumerate() {
         matcher_list.iter().for_each(|matcher| {
             if line.contains(matcher) {
-                matches.push(line.to_string().replace(matcher, &format!("\x1b[94m{}\x1b[0m", matcher)));
+                matches.push(LineMatch {
+                    line: line
+                        .to_string()
+                        .replace(matcher, &format!("\x1b[94m{}\x1b[0m", matcher)),
+                    line_number: index as i64 + 1,
+                });
             }
         });
     }
     if !matches.is_empty() {
-         Some(matches)
+        Some(matches)
     } else {
-         None
-    } 
+        None
+    }
 }
 
 fn get_match_arg() -> Vec<String> {
