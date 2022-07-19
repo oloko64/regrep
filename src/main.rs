@@ -4,8 +4,8 @@ use std::{
 };
 
 fn main() {
-    match match_in_line(read_lines_stdin(), get_match_arg()) {
-        Some(matched) => println!("{}", matched),
+    match match_in_file(read_lines_stdin(), get_match_arg()) {
+        Some(matched) => println!("{}", matched.join("\n")),
         None => (),
     }
 }
@@ -20,7 +20,7 @@ fn read_lines_stdin() -> Vec<String> {
         .collect()
 }
 
-fn match_in_line(lines: Vec<String>, matcher_list: Vec<String>) -> Option<String> {
+fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<String>> {
     let mut matches = Vec::new();
     for line in lines {
         matcher_list.iter().for_each(|matcher| {
@@ -30,7 +30,7 @@ fn match_in_line(lines: Vec<String>, matcher_list: Vec<String>) -> Option<String
         });
     }
     if matches.len() > 0 {
-         Some(matches.join("\n"))
+         Some(matches)
     } else {
          None
     }
