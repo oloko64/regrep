@@ -1,8 +1,9 @@
+use rayon::prelude::*;
 use std::{
     io::{self, BufRead},
-    process::exit, sync::Mutex,
+    process::exit,
+    sync::Mutex,
 };
-use rayon::prelude::*;
 
 #[derive(Clone)]
 struct LineMatch {
@@ -11,12 +12,12 @@ struct LineMatch {
 }
 
 fn main() {
-    match match_in_file(read_lines_stdin(), get_match_arg()) {
+    match match_in_file(&read_lines_stdin(), &get_match_arg()) {
         Some(matched) => {
             for line in matched {
                 println!("{}: {}", line.line_number, line.line);
             }
-        },
+        }
         None => (),
     }
 }
@@ -31,7 +32,7 @@ fn read_lines_stdin() -> Vec<String> {
         .collect()
 }
 
-fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<LineMatch>> {
+fn match_in_file(lines: &Vec<String>, matcher_list: &Vec<String>) -> Option<Vec<LineMatch>> {
     let matches = Mutex::new(Vec::new());
     lines.par_iter().enumerate().for_each(|(index, line)| {
         matcher_list.par_iter().for_each(|matcher| {
