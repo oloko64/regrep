@@ -23,8 +23,7 @@ fn main() {
 }
 
 fn read_lines_stdin() -> Vec<String> {
-    let stdin = io::stdin();
-    stdin
+    io::stdin()
         .lock()
         .lines()
         .into_iter()
