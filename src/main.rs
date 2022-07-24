@@ -1,8 +1,10 @@
 use std::{
     io::{self, BufRead},
-    process::exit,
+    process::exit, sync::Mutex,
 };
+use rayon::prelude::*;
 
+#[derive(Clone)]
 struct LineMatch {
     line: String,
     line_number: i64,
@@ -30,11 +32,12 @@ fn read_lines_stdin() -> Vec<String> {
 }
 
 fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<LineMatch>> {
-    let mut matches = Vec::new();
-    for (index, line) in lines.iter().enumerate() {
-        matcher_list.iter().for_each(|matcher| {
+    let matches = Mutex::new(Vec::new());
+    lines.par_iter().enumerate().for_each(|(index, line)| {
+        matcher_list.par_iter().for_each(|matcher| {
             if line.contains(matcher) {
-                matches.push(LineMatch {
+                let mut guard = matches.lock().unwrap();
+                guard.push(LineMatch {
                     line: line
                         .to_string()
                         .replace(matcher, &format!("\x1b[94m{}\x1b[0m", matcher)),
@@ -42,11 +45,11 @@ fn match_in_file(lines: Vec<String>, matcher_list: Vec<String>) -> Option<Vec<Li
                 });
             }
         });
-    }
-    if !matches.is_empty() {
-        Some(matches)
-    } else {
+    });
+    if matches.lock().unwrap().is_empty() {
         None
+    } else {
+        Some(matches.lock().unwrap().to_vec())
     }
 }
 
