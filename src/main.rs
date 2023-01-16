@@ -8,8 +8,6 @@ fn main() {
     let mut lines = read_lines_stdin();
     let mut matcher = args.match_string;
 
-    dbg!(&matcher);
-
     if args.insensitive {
         lines
             .iter_mut()
