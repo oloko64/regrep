@@ -7,7 +7,8 @@ edition = "2021"
 
 [profile.release]
 lto = true
-opt-level = "s"
+codegen-units = 1
+# opt-level = "s"
 strip = true # Only works on *nix systems
 
 [dependencies]
