@@ -1,7 +1,7 @@
 // use rayon::prelude::*;
 use std::{
     io::{self, BufRead},
-    process::exit,
+    process::exit, fmt::{Display, Formatter, Error},
     // sync::Mutex,
 };
 
@@ -19,10 +19,16 @@ impl Matches {
     }
 }
 
+impl Display for Matches {
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result<(), Error> {
+        write!(f, "{}: {}", self.line_number, self.line)
+    }
+}
+
 fn main() {
     if let Some(matched) = match_in_file(&read_lines_stdin(), &get_match_arg()) {
         for line in matched {
-            println!("{}: {}", line.line_number, line.line);
+            println!("{line}");
         }
     }
 }
