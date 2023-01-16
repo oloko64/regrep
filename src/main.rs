@@ -4,7 +4,7 @@ use std::io::{self, BufRead};
 mod arg_parser;
 
 fn main() {
-    let args = arg_parser::parse_args().unwrap();
+    let args = arg_parser::parse_args().expect("Failed to parse arguments");
     let mut lines = read_lines_stdin();
     let mut matcher = args.match_string;
 
